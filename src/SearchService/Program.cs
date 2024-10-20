@@ -19,6 +19,13 @@ builder.Services.AddMassTransit(x =>
     x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("search", false));
     x.UsingRabbitMq((context, cfg) =>
     {
+
+        cfg.Host(builder.Configuration["RabbitMq:Host"], "/", host => 
+       {
+         host.Username(builder.Configuration.GetValue("RabbitMq:Username", "guest"));
+         host.Password(builder.Configuration.GetValue("RabbitMq:Password", "guest"));
+       });
+
         // When an exception occurs when trying to read an item from the rabbit queue, it retry to read it again and again.
        // Can be set per endpoint basis
        cfg.ReceiveEndpoint("search-auction-created", e =>
